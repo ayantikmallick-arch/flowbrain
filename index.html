@@ -457,7 +457,10 @@
     <div id="empty-state">
       <img data-logo-img src="" alt="" />
       <h2>What's on your mind?</h2>
-      <p>Ask BrainFlow anything — every conversation is saved to your history automatically.</p>
+      <p>Ask BrainFlow anything — every conversation is saved to your history automatically.
+        <br>
+        Made by Ayantik Mallick
+      
       <div class="suggestion-row">
         <button class="suggestion-chip">Explain a tricky concept simply</button>
         <button class="suggestion-chip">Draft an email for me</button>
@@ -518,7 +521,7 @@ const googleProvider = new GoogleAuthProvider();
    NOTE: this key is only a placeholder wired up for you to replace.
    See the message accompanying this file for why it must not stay
    hard-coded here in a real deployment. */
-const GEMINI_API_KEY = "AQ.Ab8RN6IW6Cezgqz3fTJ6VE1SHjDpxitkT0WoI18eAM4Uf7XCMA";
+const GEMINI_API_KEY = "AQ.Ab8RN6JSvOipyqppIntNSKIml__Mcljes59XliyJDsm1r6pDSw";
 const GEMINI_MODEL = "gemini-2.5-flash";
 
 const BRAINFLOW_SYSTEM_INSTRUCTION = `You are BrainFlow, a helpful AI assistant. Speak as BrainFlow at all times.
@@ -528,10 +531,10 @@ async function askGemini(historyForApi){
   if(GEMINI_API_KEY === "GEMINI_API_KEY"){
     throw new Error("No Gemini API key set yet — paste a real key (from aistudio.google.com/apikey) into the GEMINI_API_KEY constant in the script.");
   }
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${GEMINI_API_KEY}`;
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent`;
   const res = await fetch(url, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: { "Content-Type": "application/json", "x-goog-api-key": GEMINI_API_KEY },
     body: JSON.stringify({
       systemInstruction: { role: "system", parts: [{ text: BRAINFLOW_SYSTEM_INSTRUCTION }] },
       contents: historyForApi
@@ -560,11 +563,11 @@ function fileToBase64(file){
 
 async function generateChatTitle(userText, aiText){
   try{
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${GEMINI_API_KEY}`;
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent`;
     const prompt = `Based on this exchange, write a short chat title (3-5 words, no quotes, no punctuation at the end, plain text only).\nUser: ${userText}\nAssistant: ${aiText}`;
     const res = await fetch(url, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json", "x-goog-api-key": GEMINI_API_KEY },
       body: JSON.stringify({ contents: [{ role:'user', parts:[{ text: prompt }] }] })
     });
     if(!res.ok) return null;
